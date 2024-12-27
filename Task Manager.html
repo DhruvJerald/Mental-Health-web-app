@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Drag and Drop</title>
+    <style>
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: rgb(87,104,176);
+            background: linear-gradient(90deg, rgba(87,104,176,1) 0%, rgba(73,230,217,1) 50%, rgba(87,104,176,1) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 1200px; /* To ensure the container doesn't stretch too wide */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .tables-container {
+            display: flex; /* Flexbox to arrange tables horizontally */
+            justify-content: space-between; /* Space the tables evenly */
+            gap: 20px; /* Adds space between the tables */
+            width: 100%;
+        }
+
+        .task-table {
+            background-color: #fafafa;
+            border-radius: 8px;
+            width: 30%; /* Each table takes up 30% of the width */
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto; /* Ensure the task list doesn't overflow out of the table */
+            min-height: 150px; /* Ensure tables have enough height */
+            border: 2px dashed transparent; /* Initial border for drag over indication */
+        }
+
+        .task-table.dragover {
+            border-color: #4CAF50; /* Border color when dragging over the table */
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .table-name {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px;
+            width: 80%;
+            font-size: 16px;
+            text-align: center;
+            background-color: #fff;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-bottom: 10px;
+        }
+
+        /* New task input styles */
+        .new-task-input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .add-task-btn {
+            width: 100%;
+            padding: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .add-task-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Task styling */
+        .task-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move; /* Make the task draggable */
+            background-color: #fff;
+        }
+
+        .task-item button {
+            background-color: transparent;
+            border: none;
+            color: #d9534f;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .task-item button:hover {
+            text-decoration: underline;
+        }
+
+        /* Completed task styles (scratched out) */
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        /* Styling for dragging */
+        .task-item.dragging {
+            opacity: 0.5;
+            border: 2px dashed #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Task Management</h1>
+        
+        <div class="tables-container">
+            <!-- Table 1 -->
+            <div class="task-table" id="table1" ondrop="drop(event, 'taskList1')" ondragover="allowDrop(event)">
+                <div class="table-header">
+                    <input type="text" id="table1Name" value="Table 1" class="table-name" />
+                </div>
+                <ul class="taskList" id="taskList1"></ul>
+                <input type="text" id="newTask1" class="new-task-input" placeholder="Add a new task..." />
+                <button class="add-task-btn" onclick="addTask('taskList1', 'newTask1')">Add Task</button>
+            </div>
+
+            <!-- Table 2 -->
+            <div class="task-table" id="table2" ondrop="drop(event, 'taskList2')" ondragover="allowDrop(event)">
+                <div class="table-header">
+                    <input type="text" id="table2Name" value="Table 2" class="table-name" />
+                </div>
+                <ul class="taskList" id="taskList2"></ul>
+                <input type="text" id="newTask2" class="new-task-input" placeholder="Add a new task..." />
+                <button class="add-task-btn" onclick="addTask('taskList2', 'newTask2')">Add Task</button>
+            </div>
+
+            <!-- Table 3 -->
+            <div class="task-table" id="table3" ondrop="drop(event, 'taskList3')" ondragover="allowDrop(event)">
+                <div class="table-header">
+                    <input type="text" id="table3Name" value="Table 3" class="table-name" />
+                </div>
+                <ul class="taskList" id="taskList3"></ul>
+                <input type="text" id="newTask3" class="new-task-input" placeholder="Add a new task..." />
+                <button class="add-task-btn" onclick="addTask('taskList3', 'newTask3')">Add Task</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to add a task under a specific table
+        function addTask(taskListId, taskInputId) {
+            const taskList = document.getElementById(taskListId);
+            const taskInput = document.getElementById(taskInputId);
+            const taskText = taskInput.value.trim();
+
+            if (taskText !== "") {
+                // Create task list item
+                const taskItem = document.createElement('li');
+                taskItem.classList.add('task-item');
+                taskItem.setAttribute('draggable', 'true');  // Make it draggable
+                taskItem.setAttribute('ondragstart', 'dragStart(event)');
+                taskItem.setAttribute('ondragend', 'dragEnd(event)');
+
+                // Add task text
+                taskItem.innerHTML = `
+                    <span>${taskText}</span>
+                    <div>
+                        <button onclick="markCompleted(this)">✔️</button>
+                        <button onclick="deleteTask(this)">❌</button>
+                    </div>
+                `;
+
+                // Append the task to the list
+                taskList.appendChild(taskItem);
+
+                // Clear the input field
+                taskInput.value = "";
+            }
+        }
+
+        // Function to mark a task as completed (scratching out)
+        function markCompleted(button) {
+            const taskItem = button.closest('.task-item');
+            taskItem.querySelector('span').classList.toggle('completed');
+        }
+
+        // Function to delete a task
+        function deleteTask(button) {
+            const taskItem = button.closest('.task-item');
+            taskItem.remove();
+        }
+
+        // Enable the table to accept dragged tasks
+        function allowDrop(event) {
+            event.preventDefault();  // Allow the drop event to be triggered
+            event.target.closest('.task-table').classList.add('dragover');
+        }
+
+        // Handle the drop event
+        function drop(event, taskListId) {
+            event.preventDefault();
+            const draggedTask = document.querySelector('.dragging');
+            const taskList = document.getElementById(taskListId);
+            taskList.appendChild(draggedTask);
+            event.target.closest('.task-table').classList.remove('dragover');
+        }
+
+        // Handle the dragstart event
+        function dragStart(event) {
+            event.dataTransfer.setData('text', event.target.id);
+            event.target.classList.add('dragging');
+        }
+
+        // Handle the dragend event
+        function dragEnd(event) {
+            event.target.classList.remove('dragging');
+            const taskTables = document.querySelectorAll('.task-table');
+            taskTables.forEach(table => table.classList.remove('dragover'));
+        }
+    </script>
+</body>
+</html>

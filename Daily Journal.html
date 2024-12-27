@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal</title>
+    <style>
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: rgb(87,104,176);
+            background: linear-gradient(90deg, rgb(7, 11, 31) 0%, rgb(46, 95, 91) 50%, rgb(48, 58, 100) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            color: #333;
+        }
+
+        .container {
+            background-color: rgb(255, 255, 255);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        h2, h3 {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #0004ff;
+            margin-bottom: 50px;
+            resize: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .notes-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .note {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            width: 80%;
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .note h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Daily Journal</h1>
+
+        <!-- Section to add a new entry -->
+        <div class="notepad">
+            <h2 id="notepad-heading">Day 1</h2>
+            <textarea id="feelings" placeholder="How do you feel today?..."></textarea>
+            <button id="saveBtn">Save Note</button>
+        </div>
+
+        <!-- Display saved notes -->
+        <div id="notes-container" class="notes-container">
+            <h3>Saved Notes:</h3>
+        </div>
+    </div>
+    <script>
+        let dayCounter = 1; // To track the current day
+        let notes = []; // To store all saved notes
+
+        // Update the heading with the current day
+        const updateHeading = () => {
+            const heading = document.getElementById('notepad-heading');
+            heading.textContent = `Day ${dayCounter}`;
+        };
+
+        // Save the current note and display it in the saved notes section
+        const saveNote = () => {
+            const feelings = document.getElementById('feelings').value.trim();
+            
+            if (feelings !== "") {
+                // Create a new note object
+                const note = {
+                    day: `Day ${dayCounter}`,
+                    text: feelings
+                };
+                
+                // Save the note
+                notes.push(note);
+                
+                // Display the saved note
+                const notesContainer = document.getElementById('notes-container');
+                const noteDiv = document.createElement('div');
+                noteDiv.classList.add('note');
+                noteDiv.innerHTML =`<h3>${note.day}</h3><p>${note.text}</p>`;
+                notesContainer.appendChild(noteDiv);
+                
+                // Clear the textarea after saving the note
+                document.getElementById('feelings').value = "";
+                
+                // Increment day counter and update heading
+                dayCounter++;
+                updateHeading();
+            }
+        };
+
+        // Event listener for the save button
+        document.getElementById('saveBtn').addEventListener('click', saveNote);
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sophrosyne</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            background: #101010;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #151515;
+            padding: 15px 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            font-family: 'Exo 2', sans-serif;
+            color: #888;
+            font-size: 18px;
+            margin: 0 15px;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #0ff;
+            text-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
+        }
+
+        h1 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 3rem;
+            color: #fff;
+            margin: 50px 0 20px;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        }
+
+        .content h2 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 2rem;
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        .content p {
+            font-size: 1rem;
+            margin: 20px auto;
+            line-height: 1.6;
+            color: #ccc;
+            max-width: 800px;
+        }
+
+        /* Features Section */
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: #181818;
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(19, 175, 154, 0.6);
+        }
+
+        .feature-card img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 5px #0ff);
+        }
+
+        .feature-card h4 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.5rem;
+            color: #0ff;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 1rem;
+            color: #ccc;
+        }
+
+        footer {
+            background: #151515;
+            color: #888;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            
+        }
+
+        /* Logo */
+        .logo-container img {
+            width: 80px;
+            height: 80px;
+            margin: 20px 0;
+        }
+
+        /* Minimalistic hover effect */
+        .hover-effect:hover {
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .feature-card {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="sophsynce logo.png" alt="Logo">
+    </div>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="Breathing.html">Breathing Exercises</a>
+        <a href="Daily Journal.html">Daily Journal</a>
+        <a href="Moodtracker.html">Emotion Tracker</a>
+        <a href="Task Manager.html">Task Manager</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Welcome to Mental Health Awareness</h1>
+        <div class="content">
+            <h2>Understanding Mental Health</h2>
+            <p>Mental health refers to our emotional, psychological, and social well-being. It affects how we think, feel, and act. Mental health is important at every stage of life, from childhood and adolescence through adulthood.</p>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="feature-card">
+            <img src="Untitled design.png" alt="Experienced">
+            <h4>Why Choose Us?</h4>
+            <p>Because we believe mental health isn’t just about bad days—it’s about building habits for a healthier, happier you.</p>
+        </div>
+        <div class="feature-card">
+            <img src="flower.png" alt="Extensive Network">
+            <h4>Sophrosynce</h4>
+            <p>The name 'Sophrosynce' means "balance" or "self-control," embodying our mission of harmony.</p>
+        </div>
+        <div class="feature-card">
+            <img src="star.png" alt="Top-Notch Customer Service">
+            <h4>Contact Us</h4>
+            <p>Phone: 62573726378<br>Email: dhruv.j@gmail.com<br>Remember, you’re never alone.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Bitspace</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
+<script src="https://files.bpcontent.cloud/2024/12/27/09/20241227092700-RUPEX0FJ.js"></script>
+    
+</body>
+</html>

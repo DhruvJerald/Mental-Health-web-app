@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Mood Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: rgb(87,104,176);
+            background: linear-gradient(90deg, rgba(87,104,176,1) 0%, rgba(73,230,217,1) 50%, rgba(87,104,176,1) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            color: #fff;
+            text-align: center;
+        }
+
+        /* Heading Styles */
+        h1 {
+            margin-bottom: 20px;
+            font-size: 3rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Image Selection Styles */
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .image-container img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border 0.3s ease, transform 0.3s ease;
+        }
+
+        .image-container img:hover {
+            border: 2px solid #00ff00;
+            transform: scale(1.1);
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.6);
+        }
+
+        .selected-container {
+            margin-top: 30px;
+        }
+
+        .selected-container img {
+            width: 100px;
+            height: 100px;
+            margin: 5px;
+            border: 2px solid #28a745;
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .selected-container img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Button Styles */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+        }
+
+        /* Graph Styles */
+        .canvas-container {
+            width: 80%;
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .image-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Image Selection Section -->
+    <h1 id="heading">How did you feel from 8 am-12 pm</h1>
+    <div class="image-container" id="imageContainer">
+        <img src="Angry.png" alt="Angry" data-id="1">
+        <img src="Annoyed.png" alt="Annoyed" data-id="2">
+        <img src="Sad.png" alt="Sad" data-id="3">
+        <img src="Ok.png" alt="Calm" data-id="4">
+        <img src="Silly.png" alt="Silly" data-id="5">
+        <img src="Happy.png" alt="Happy" data-id="6">
+    </div>
+    <div id="status">Click an image to start!</div>
+    <div class="selected-container" id="selectedContainer">
+        <h2>Selected Images:</h2>
+    </div>
+
+    <!-- Graph Section -->
+    <div class="canvas-container">
+        <canvas id="myLineChart"></canvas>
+    </div>
+
+    <script>
+        // Image Selection Logic
+        const imageContainer = document.getElementById('imageContainer');
+        const heading = document.getElementById('heading');
+        const status = document.getElementById('status');
+        const selectedContainer = document.getElementById('selectedContainer');
+        let selections = [];
+        const maxSelections = 4;
+
+        const headings = [
+            "Skip",
+            "How did you feel from 12 pm-4 pm",
+            "How did you feel from 4 pm-8 pm",
+            "How did you feel from 8 pm-12 am",
+            "Plotting graph!"
+        ];
+
+        imageContainer.addEventListener('click', (event) => {
+            if (event.target.tagName === 'IMG') {
+                const imageUrl = event.target.src;
+                const dataId = event.target.getAttribute('data-id');
+
+                if (selections.length < maxSelections) {
+                    displaySelectedImage(imageUrl);
+                    selections.push({ imageUrl, dataId: parseInt(dataId) });
+                    updateHeading();
+                    status.textContent =` Image ${selections.length} selected. ${maxSelections - selections.length} more to go.`;
+
+                    if (selections.length === maxSelections) {
+                        status.textContent = 'All images selected!';
+                        console.log('Selected images:', selections);
+
+                        // Store only data-id values for the graph
+                        const graphData = selections.map(selection => selection.dataId);
+                        localStorage.setItem('selectedImages', JSON.stringify(graphData));
+
+                        plotGraph(graphData);
+                    }
+                } else {
+                    alert('You have already selected 4 images!');
+                }
+            }
+        });
+
+        function updateHeading() {
+            if (selections.length < maxSelections) {
+                heading.textContent = headings[selections.length];
+            } else {
+                heading.textContent = headings[maxSelections];
+            }
+        }
+
+        function displaySelectedImage(imageUrl) {
+            const imgElement = document.createElement('img');
+            imgElement.src = imageUrl;
+            selectedContainer.appendChild(imgElement);
+        }
+
+        // Graph Plotting Logic
+        function plotGraph(data) {
+            const ctx = document.getElementById('myLineChart').getContext('2d');
+
+            const moodLabels = {
+                1: 'Angry',
+                2: 'Annoyed',
+                3: 'Sad',
+                4: 'Calm',
+                5: 'Silly',
+                6: 'Happy',
+            };
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['8am-12pm', '12pm-4pm', '4pm-8pm', '8pm-12am'], // Labels for the time periods
+                    datasets: [{
+                        label: 'Mood Score',
+                        data: data, // Use retrieved or default values
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time Periods',
+                            },
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Mood',
+                            },
+                            beginAtZero: true,
+                            max: 6,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    return moodLabels[value] || '';
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
+        // Load Graph on Page Load if Data Exists
+        window.addEventListener('load', () => {
+            const storedData = localStorage.getItem('selectedImages');
+            if (storedData) {
+                try {
+                    const parsedData = JSON.parse(storedData);
+                    if (Array.isArray(parsedData) && parsedData.every(num => typeof num === 'number')) {
+                        plotGraph(parsedData);
+                    }
+                } catch (e) {
+                    console.error('Error parsing stored graph data:', e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
